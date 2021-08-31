@@ -16,7 +16,12 @@
  */
 package brut.androlib.aapt2;
 
-import brut.androlib.*;
+import brut.androlib.Androlib;
+import brut.androlib.AndrolibException;
+import brut.androlib.ApkDecoder;
+import brut.androlib.ApkOptions;
+import brut.androlib.BaseTest;
+import brut.androlib.TestUtils;
 import brut.androlib.res.data.ResTable;
 import brut.common.BrutException;
 import brut.directory.ExtFile;
@@ -27,7 +32,8 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class NonStandardPkgIdTest extends BaseTest {
 

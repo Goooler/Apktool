@@ -18,7 +18,9 @@ package brut.androlib.res.data;
 
 import brut.androlib.AndrolibException;
 import brut.androlib.err.UndefinedResObjectException;
-import java.util.*;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public final class ResTypeSpec {
 

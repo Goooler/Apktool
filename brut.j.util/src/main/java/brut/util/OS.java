@@ -19,7 +19,14 @@ package brut.util;
 import brut.common.BrutException;
 import org.apache.commons.io.IOUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,7 +38,7 @@ public class OS {
     private static final Logger LOGGER = Logger.getLogger("");
 
     public static void rmdir(File dir) throws BrutException {
-        if (! dir.exists()) {
+        if (!dir.exists()) {
             return;
         }
         File[] files = dir.listFiles();
@@ -50,8 +57,8 @@ public class OS {
     }
 
     public static void rmfile(String file) {
-    	File del = new File(file);
-    	del.delete();
+        File del = new File(file);
+        del.delete();
     }
 
     public static void rmdir(String dir) throws BrutException {
@@ -116,9 +123,9 @@ public class OS {
             executor.execute(collector);
 
             process.waitFor();
-            if (! executor.awaitTermination(15, TimeUnit.SECONDS)) {
+            if (!executor.awaitTermination(15, TimeUnit.SECONDS)) {
                 executor.shutdownNow();
-                if (! executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
                     System.err.println("Stream collector did not terminate.");
                 }
             }
@@ -188,7 +195,8 @@ public class OS {
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line).append('\n');
                 }
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
 
         public String get() {

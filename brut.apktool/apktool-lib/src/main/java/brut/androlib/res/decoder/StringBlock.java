@@ -25,7 +25,10 @@ import com.google.common.collect.ComparisonChain;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.*;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -41,9 +44,9 @@ public class StringBlock {
     /**
      * Reads whole (including chunk type) string block from stream. Stream must
      * be at the chunk type.
+     *
      * @param reader ExtDataInput
      * @return StringBlock
-     *
      * @throws IOException Parsing resources.arsc error
      */
     public static StringBlock read(ExtDataInput reader) throws IOException {
@@ -87,6 +90,7 @@ public class StringBlock {
 
     /**
      * Returns raw string (without any styling information) at specified index.
+     *
      * @param index int
      * @return String
      */
@@ -124,14 +128,15 @@ public class StringBlock {
             this.position = position;
             this.matchingTagPosition = matchingTagPosition;
         }
-        
+
         /**
          * compares this tag and another, returning the order that should be between them.
          * order by:
-         *      position
-         *      closing tag has precedence over openning tag (unless it is the same tag)
-         *      tags that are enclosed in others should appear later if openning tag, or first if closing tag
-         *      lexicographical sort. openning tag and closing tag in reverse so that one tag will be contained in the other and not each contain the other partially
+         * position
+         * closing tag has precedence over openning tag (unless it is the same tag)
+         * tags that are enclosed in others should appear later if openning tag, or first if closing tag
+         * lexicographical sort. openning tag and closing tag in reverse so that one tag will be contained in the other and not each contain the other partially
+         *
          * @param o - the other tag object to compare to
          * @return the order in between this object and the other
          */
@@ -151,6 +156,7 @@ public class StringBlock {
 
         /**
          * formats the tag value and attributes according to whether the tag is an openning or closing tag
+         *
          * @return the formatted tag value as a string
          */
         @Override
@@ -164,7 +170,7 @@ public class StringBlock {
                     if (separatorIdx != -1) {
                         StringJoiner attributes = new StringJoiner(" ");
                         ATTRIBUTES_SPLITTER
-                            .split(tag.substring(separatorIdx + 1, tag.endsWith(";") ? tag.length() - 1: tag.length()))
+                            .split(tag.substring(separatorIdx + 1, tag.endsWith(";") ? tag.length() - 1 : tag.length()))
                             .forEach((key, value) -> attributes.add(String.format("%s=\"%s\"", key, value)));
                         return String.format("<%s %s>", actualTag, attributes);
                     }
@@ -227,7 +233,6 @@ public class StringBlock {
     }
 
     /**
-     *
      * @param styledString - the raw string with its corresponding styling tags and their locations
      * @return a formatted styled string that contains the styling tag in the correct locations
      */
@@ -332,7 +337,7 @@ public class StringBlock {
      * start index in string * third int is tag end index in string
      */
     private int[] getStyle(int index) {
-        if (m_styleOffsets == null || m_styles == null|| index >= m_styleOffsets.length) {
+        if (m_styleOffsets == null || m_styles == null || index >= m_styleOffsets.length) {
             return null;
         }
         int offset = m_styleOffsets[index] / 4;
@@ -351,7 +356,7 @@ public class StringBlock {
         }
         style = new int[count];
 
-        for (int i = offset, j = 0; i < m_styles.length;) {
+        for (int i = offset, j = 0; i < m_styles.length; ) {
             if (m_styles[i] == -1) {
                 break;
             }
@@ -400,13 +405,13 @@ public class StringBlock {
         val = array[offset];
         offset += 1;
         if ((val & 0x80) != 0) {
-        	int low = (array[offset] & 0xFF);
-        	length = ((val & 0x7F) << 8) + low;
+            int low = (array[offset] & 0xFF);
+            length = ((val & 0x7F) << 8) + low;
             offset += 1;
         } else {
             length = val;
         }
-        return new int[] { offset, length};
+        return new int[]{offset, length};
     }
 
     private static int[] getUtf16(byte[] array, int offset) {
@@ -415,11 +420,11 @@ public class StringBlock {
         if ((val & 0x8000) != 0) {
             int high = (array[offset + 3] & 0xFF) << 8;
             int low = (array[offset + 2] & 0xFF);
-            int len_value =  ((val & 0x7FFF) << 16) + (high + low);
-            return new int[] {4, len_value * 2};
+            int len_value = ((val & 0x7FFF) << 16) + (high + low);
+            return new int[]{4, len_value * 2};
 
         }
-        return new int[] {2, val * 2};
+        return new int[]{2, val * 2};
     }
 
     private int[] m_stringOffsets;

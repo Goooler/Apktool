@@ -61,7 +61,7 @@ public class VectorDrawableTest extends BaseTest {
     }
 
     private void checkFileExists(String path) {
-        File f =  new File(sTestOrigDir, path);
+        File f = new File(sTestOrigDir, path);
 
         assertTrue(f.isFile());
     }

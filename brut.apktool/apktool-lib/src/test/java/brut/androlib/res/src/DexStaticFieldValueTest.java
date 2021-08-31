@@ -16,7 +16,11 @@
  */
 package brut.androlib.res.src;
 
-import brut.androlib.*;
+import brut.androlib.Androlib;
+import brut.androlib.ApkDecoder;
+import brut.androlib.ApkOptions;
+import brut.androlib.BaseTest;
+import brut.androlib.TestUtils;
 import brut.androlib.aapt2.BuildAndDecodeTest;
 import brut.common.BrutException;
 import brut.directory.ExtFile;
@@ -65,22 +69,22 @@ public class DexStaticFieldValueTest extends BaseTest {
     @Test
     public void disassembleDexFileToKeepDefaultParameters() throws IOException {
         String expected = TestUtils.replaceNewlines(
-                ".class public LHelloWorld;\n"
-                        + ".super Ljava/lang/Object;\n"
-                        + "\n"
-                        + "\n"
-                        + "# static fields\n"
-                        + ".field private static b:Z = false\n"
-                        + "\n"
-                        + ".field private static c:Z = true\n"
-                        + "\n"
-                        + "\n"
-                        + "# direct methods\n"
-                        + ".method public static main([Ljava/lang/String;)V\n"
-                        + "    .locals 1\n"
-                        + "\n"
-                        + "    return-void\n"
-                        + ".end method");
+            ".class public LHelloWorld;\n"
+                + ".super Ljava/lang/Object;\n"
+                + "\n"
+                + "\n"
+                + "# static fields\n"
+                + ".field private static b:Z = false\n"
+                + "\n"
+                + ".field private static c:Z = true\n"
+                + "\n"
+                + "\n"
+                + "# direct methods\n"
+                + ".method public static main([Ljava/lang/String;)V\n"
+                + "    .locals 1\n"
+                + "\n"
+                + "    return-void\n"
+                + ".end method");
 
         byte[] encoded = Files.readAllBytes(Paths.get(sTestNewDir + File.separator + "smali" + File.separator
             + "HelloWorld.smali"));

@@ -19,8 +19,10 @@ package brut.androlib.androlib;
 import brut.androlib.BaseTest;
 import brut.androlib.res.AndrolibResources;
 import org.junit.Test;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 
 public class InvalidSdkBoundingTest extends BaseTest {

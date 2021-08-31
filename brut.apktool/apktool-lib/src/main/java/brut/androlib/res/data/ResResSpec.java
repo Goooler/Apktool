@@ -78,7 +78,7 @@ public class ResResSpec {
 
     public String getFullName(boolean excludePackage, boolean excludeType) {
         return (excludePackage ? "" : getPackage().getName() + ":")
-                + (excludeType ? "" : getType().getName() + "/") + getName();
+            + (excludeType ? "" : getType().getName() + "/") + getName();
     }
 
     public ResID getId() {

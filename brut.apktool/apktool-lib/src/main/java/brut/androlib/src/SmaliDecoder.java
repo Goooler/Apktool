@@ -21,9 +21,9 @@ import org.jf.baksmali.Baksmali;
 import org.jf.baksmali.BaksmaliOptions;
 import org.jf.dexlib2.DexFileFactory;
 import org.jf.dexlib2.Opcodes;
+import org.jf.dexlib2.analysis.InlineMethodResolver;
 import org.jf.dexlib2.dexbacked.DexBackedDexFile;
 import org.jf.dexlib2.dexbacked.DexBackedOdexFile;
-import org.jf.dexlib2.analysis.InlineMethodResolver;
 import org.jf.dexlib2.iface.DexFile;
 import org.jf.dexlib2.iface.MultiDexContainer;
 
@@ -33,7 +33,7 @@ import java.io.IOException;
 public class SmaliDecoder {
 
     public static DexFile decode(File apkFile, File outDir, String dexName, boolean bakDeb, int apiLevel)
-            throws AndrolibException {
+        throws AndrolibException {
         return new SmaliDecoder(apkFile, outDir, dexName, bakDeb, apiLevel).decode();
     }
 
@@ -69,7 +69,7 @@ public class SmaliDecoder {
 
             // create the container
             MultiDexContainer<? extends DexBackedDexFile> container =
-                    DexFileFactory.loadDexContainer(mApkFile, mApiLevel > 0 ? Opcodes.forApi(mApiLevel) : null);
+                DexFileFactory.loadDexContainer(mApkFile, mApiLevel > 0 ? Opcodes.forApi(mApiLevel) : null);
             MultiDexContainer.DexEntry<? extends DexBackedDexFile> dexEntry;
             DexBackedDexFile dexFile;
 
@@ -94,7 +94,7 @@ public class SmaliDecoder {
 
             if (dexFile instanceof DexBackedOdexFile) {
                 options.inlineResolver =
-                        InlineMethodResolver.createInlineMethodResolver(((DexBackedOdexFile)dexFile).getOdexVersion());
+                    InlineMethodResolver.createInlineMethodResolver(((DexBackedOdexFile) dexFile).getOdexVersion());
             }
 
             Baksmali.disassembleDexFile(dexFile, mOutDir, jobs, options);

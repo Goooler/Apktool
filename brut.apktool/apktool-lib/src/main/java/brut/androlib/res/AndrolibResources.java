@@ -22,22 +22,59 @@ import brut.androlib.err.CantFindFrameworkResException;
 import brut.androlib.meta.MetaInfo;
 import brut.androlib.meta.PackageInfo;
 import brut.androlib.meta.VersionInfo;
-import brut.androlib.res.data.*;
-import brut.androlib.res.decoder.*;
+import brut.androlib.res.data.ResConfigFlags;
+import brut.androlib.res.data.ResPackage;
+import brut.androlib.res.data.ResResSpec;
+import brut.androlib.res.data.ResResource;
+import brut.androlib.res.data.ResTable;
+import brut.androlib.res.data.ResValuesFile;
+import brut.androlib.res.decoder.ARSCDecoder;
 import brut.androlib.res.decoder.ARSCDecoder.ARSCData;
 import brut.androlib.res.decoder.ARSCDecoder.FlagsOffset;
+import brut.androlib.res.decoder.AXmlResourceParser;
+import brut.androlib.res.decoder.AndroidManifestResourceParser;
+import brut.androlib.res.decoder.Res9patchStreamDecoder;
+import brut.androlib.res.decoder.ResAttrDecoder;
+import brut.androlib.res.decoder.ResFileDecoder;
+import brut.androlib.res.decoder.ResRawStreamDecoder;
+import brut.androlib.res.decoder.ResStreamDecoderContainer;
+import brut.androlib.res.decoder.XmlPullStreamDecoder;
 import brut.androlib.res.util.ExtMXSerializer;
 import brut.androlib.res.util.ExtXmlSerializer;
 import brut.androlib.res.xml.ResValuesXmlSerializable;
 import brut.androlib.res.xml.ResXmlPatcher;
 import brut.common.BrutException;
-import brut.directory.*;
-import brut.util.*;
+import brut.directory.Directory;
+import brut.directory.DirectoryException;
+import brut.directory.ExtFile;
+import brut.directory.FileDirectory;
+import brut.directory.ZipUtils;
+import brut.util.AaptManager;
+import brut.util.Duo;
+import brut.util.Jar;
+import brut.util.OS;
+import brut.util.OSDetection;
 import org.apache.commons.io.IOUtils;
 import org.xmlpull.v1.XmlSerializer;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
@@ -50,7 +87,7 @@ final public class AndrolibResources {
     }
 
     public ResTable getResTable(ExtFile apkFile, boolean loadMainPkg)
-            throws AndrolibException {
+        throws AndrolibException {
         ResTable resTable = new ResTable(this);
         if (loadMainPkg) {
             loadMainPkg(resTable, apkFile);
@@ -59,7 +96,7 @@ final public class AndrolibResources {
     }
 
     public ResPackage loadMainPkg(ResTable resTable, ExtFile apkFile)
-            throws AndrolibException {
+        throws AndrolibException {
         LOGGER.info("Loading resource table...");
         ResPackage[] pkgs = getResPackagesFromApk(apkFile, resTable, sKeepBroken);
         ResPackage pkg;
@@ -92,7 +129,7 @@ final public class AndrolibResources {
 
         for (int i = 0; i < pkgs.length; i++) {
             ResPackage resPackage = pkgs[i];
-            if (resPackage.getResSpecCount() > value && ! resPackage.getName().equalsIgnoreCase("android")) {
+            if (resPackage.getResSpecCount() > value && !resPackage.getName().equalsIgnoreCase("android")) {
                 value = resPackage.getResSpecCount();
                 id = resPackage.getId();
                 index = i;
@@ -104,7 +141,7 @@ final public class AndrolibResources {
     }
 
     public ResPackage loadFrameworkPkg(ResTable resTable, int id, String frameTag)
-            throws AndrolibException {
+        throws AndrolibException {
         File apk = getFrameworkApk(id, frameTag);
 
         LOGGER.info("Loading resource table from file: " + apk);
@@ -129,7 +166,7 @@ final public class AndrolibResources {
     }
 
     public void decodeManifest(ResTable resTable, ExtFile apkFile, File outDir)
-            throws AndrolibException {
+        throws AndrolibException {
 
         Duo<ResFileDecoder, AXmlResourceParser> duo = getManifestFileDecoder(false);
         ResFileDecoder fileDecoder = duo.m1;
@@ -155,7 +192,7 @@ final public class AndrolibResources {
     }
 
     public void adjustPackageManifest(ResTable resTable, String filePath)
-            throws AndrolibException {
+        throws AndrolibException {
 
         // compare resources.arsc package name to the one present in AndroidManifest
         ResPackage resPackage = resTable.getCurrentResPackage();
@@ -176,7 +213,7 @@ final public class AndrolibResources {
     }
 
     public void decodeManifestWithResources(ResTable resTable, ExtFile apkFile, File outDir)
-            throws AndrolibException {
+        throws AndrolibException {
 
         Duo<ResFileDecoder, AXmlResourceParser> duo = getManifestFileDecoder(true);
         ResFileDecoder fileDecoder = duo.m1;
@@ -202,7 +239,7 @@ final public class AndrolibResources {
                 adjustPackageManifest(resTable, outDir.getAbsolutePath() + File.separator + "AndroidManifest.xml");
 
                 ResXmlPatcher.removeManifestVersions(new File(
-                        outDir.getAbsolutePath() + File.separator + "AndroidManifest.xml"));
+                    outDir.getAbsolutePath() + File.separator + "AndroidManifest.xml"));
 
                 mPackageId = String.valueOf(resTable.getPackageId());
             }
@@ -212,7 +249,7 @@ final public class AndrolibResources {
     }
 
     public void decode(ResTable resTable, ExtFile apkFile, File outDir)
-            throws AndrolibException {
+        throws AndrolibException {
         Duo<ResFileDecoder, AXmlResourceParser> duo = getResFileDecoder();
         ResFileDecoder fileDecoder = duo.m1;
         ResAttrDecoder attrDecoder = duo.m2.getAttrDecoder();
@@ -331,7 +368,7 @@ final public class AndrolibResources {
 
     private void aapt2Package(File apkFile, File manifest, File resDir, File rawDir, File assetDir, File[] include,
                               List<String> cmd, boolean customAapt)
-            throws AndrolibException {
+        throws AndrolibException {
 
         List<String> compileCommand = new ArrayList<>(cmd);
         File resourcesZip = null;
@@ -386,7 +423,7 @@ final public class AndrolibResources {
         cmd.add("-o");
         cmd.add(apkFile.getAbsolutePath());
 
-        if (mPackageId != null && ! mSharedLibrary) {
+        if (mPackageId != null && !mSharedLibrary) {
             cmd.add("--package-id");
             cmd.add(mPackageId);
         }
@@ -494,7 +531,7 @@ final public class AndrolibResources {
 
     private void aapt1Package(File apkFile, File manifest, File resDir, File rawDir, File assetDir, File[] include,
                               List<String> cmd, boolean customAapt)
-            throws AndrolibException {
+        throws AndrolibException {
 
         cmd.add("p");
 
@@ -512,7 +549,7 @@ final public class AndrolibResources {
         }
         // force package id so that some frameworks build with correct id
         // disable if user adds own aapt (can't know if they have this feature)
-        if (mPackageId != null && ! customAapt && ! mSharedLibrary) {
+        if (mPackageId != null && !customAapt && !mSharedLibrary) {
             cmd.add("--forced-package-id");
             cmd.add(mPackageId);
         }
@@ -608,7 +645,7 @@ final public class AndrolibResources {
     }
 
     public void aaptPackage(File apkFile, File manifest, File resDir, File rawDir, File assetDir, File[] include)
-            throws AndrolibException {
+        throws AndrolibException {
 
         String aaptPath = apkOptions.aaptPath;
         boolean customAapt = !aaptPath.isEmpty();
@@ -630,7 +667,7 @@ final public class AndrolibResources {
     }
 
     public void zipPackage(File apkFile, File rawDir, File assetDir)
-            throws AndrolibException {
+        throws AndrolibException {
 
         try {
             ZipUtils.zipFolders(rawDir, apkFile, assetDir, apkOptions.doNotCompress);
@@ -673,19 +710,19 @@ final public class AndrolibResources {
     }
 
     public boolean detectWhetherAppIsFramework(File appDir)
-            throws AndrolibException {
+        throws AndrolibException {
         File publicXml = new File(appDir, "res/values/public.xml");
-        if (! publicXml.exists()) {
+        if (!publicXml.exists()) {
             return false;
         }
 
         Iterator<String> it;
         try {
             it = IOUtils.lineIterator(new FileReader(new File(appDir,
-                    "res/values/public.xml")));
+                "res/values/public.xml")));
         } catch (FileNotFoundException ex) {
             throw new AndrolibException(
-                    "Could not detect whether app is framework one", ex);
+                "Could not detect whether app is framework one", ex);
         }
         it.next();
         it.next();
@@ -711,7 +748,7 @@ final public class AndrolibResources {
         if (withResources) {
             axmlParser.setAttrDecoder(new ResAttrDecoder());
         }
-        decoders.setDecoder("xml", new XmlPullStreamDecoder(axmlParser,getResXmlSerializer()));
+        decoders.setDecoder("xml", new XmlPullStreamDecoder(axmlParser, getResXmlSerializer()));
 
         return new Duo<>(new ResFileDecoder(decoders), axmlParser);
     }
@@ -775,8 +812,8 @@ final public class AndrolibResources {
         }
     }
 
-    private ResPackage[] getResPackagesFromApk(ExtFile apkFile,ResTable resTable, boolean keepBroken)
-            throws AndrolibException {
+    private ResPackage[] getResPackagesFromApk(ExtFile apkFile, ResTable resTable, boolean keepBroken)
+        throws AndrolibException {
         try {
             Directory dir = apkFile.getDirectory();
             try (BufferedInputStream bfi = new BufferedInputStream(dir.getFileInput("resources.arsc"))) {
@@ -788,7 +825,7 @@ final public class AndrolibResources {
     }
 
     public File getFrameworkApk(int id, String frameTag)
-            throws AndrolibException {
+        throws AndrolibException {
         File dir = getFrameworkDir();
         File apk;
 
@@ -823,11 +860,11 @@ final public class AndrolibResources {
 
         apk = new File(dir, "1.apk");
 
-        if (! apk.exists()) {
+        if (!apk.exists()) {
             LOGGER.warning("Can't empty framework directory, no file found at: " + apk.getAbsolutePath());
         } else {
             try {
-                if (apk.exists() && dir.listFiles().length > 1 && ! apkOptions.forceDeleteFramework) {
+                if (apk.exists() && dir.listFiles().length > 1 && !apkOptions.forceDeleteFramework) {
                     LOGGER.warning("More than default framework detected. Please run command with `--force` parameter to wipe framework directory.");
                 } else {
                     for (File file : dir.listFiles()) {
@@ -862,7 +899,7 @@ final public class AndrolibResources {
     }
 
     public void installFramework(File frameFile, String tag)
-            throws AndrolibException {
+        throws AndrolibException {
         InputStream in = null;
         ZipOutputStream out = null;
         try {
@@ -881,8 +918,8 @@ final public class AndrolibResources {
 
             File outFile = new File(getFrameworkDir(), arsc
                 .getOnePackage().getId()
-                    + (tag == null ? "" : '-' + tag)
-                    + ".apk");
+                + (tag == null ? "" : '-' + tag)
+                + ".apk");
 
             out = new ZipOutputStream(new FileOutputStream(outFile));
             out.setMethod(ZipOutputStream.STORED);
@@ -924,12 +961,12 @@ final public class AndrolibResources {
     public void publicizeResources(File arscFile) throws AndrolibException {
         byte[] data = new byte[(int) arscFile.length()];
 
-        try(InputStream in = new FileInputStream(arscFile);
-            OutputStream out = new FileOutputStream(arscFile)) {
+        try (InputStream in = new FileInputStream(arscFile);
+             OutputStream out = new FileOutputStream(arscFile)) {
             in.read(data);
             publicizeResources(data);
             out.write(data);
-        } catch (IOException ex){
+        } catch (IOException ex) {
             throw new AndrolibException(ex);
         }
     }
@@ -981,23 +1018,23 @@ final public class AndrolibResources {
             throw new AndrolibException("Please remove file at " + dir.getParentFile());
         }
 
-        if (! dir.exists()) {
-            if (! dir.mkdirs()) {
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
                 if (apkOptions.frameworkFolderLocation != null) {
                     LOGGER.severe("Can't create Framework directory: " + dir);
                 }
                 throw new AndrolibException(String.format(
-                        "Can't create directory: (%s). Pass a writable path with --frame-path {DIR}. ", dir
+                    "Can't create directory: (%s). Pass a writable path with --frame-path {DIR}. ", dir
                 ));
             }
         }
 
         if (apkOptions.frameworkFolderLocation == null) {
-            if (! dir.canWrite()) {
+            if (!dir.canWrite()) {
                 LOGGER.severe(String.format("WARNING: Could not write to (%1$s), using %2$s instead...",
-                        dir.getAbsolutePath(), System.getProperty("java.io.tmpdir")));
+                    dir.getAbsolutePath(), System.getProperty("java.io.tmpdir")));
                 LOGGER.severe("Please be aware this is a volatile directory and frameworks could go missing, " +
-                        "please utilize --frame-path if the default storage directory is unavailable");
+                    "please utilize --frame-path if the default storage directory is unavailable");
 
                 dir = new File(System.getProperty("java.io.tmpdir"));
             }
@@ -1054,7 +1091,7 @@ final public class AndrolibResources {
     private boolean mSharedLibrary = false;
     private boolean mSparseResources = false;
 
-    private final static String[] IGNORED_PACKAGES = new String[] {
-            "android", "com.htc", "com.lge", "com.lge.internal", "yi", "flyme", "air.com.adobe.appentry",
-            "FFFFFFFFFFFFFFFFFFFFFF" };
+    private final static String[] IGNORED_PACKAGES = new String[]{
+        "android", "com.htc", "com.lge", "com.lge.internal", "yi", "flyme", "air.com.adobe.appentry",
+        "FFFFFFFFFFFFFFFFFFFFFF"};
 }

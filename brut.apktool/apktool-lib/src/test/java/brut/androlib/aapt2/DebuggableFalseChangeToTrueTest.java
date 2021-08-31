@@ -16,7 +16,11 @@
  */
 package brut.androlib.aapt2;
 
-import brut.androlib.*;
+import brut.androlib.Androlib;
+import brut.androlib.ApkDecoder;
+import brut.androlib.ApkOptions;
+import brut.androlib.BaseTest;
+import brut.androlib.TestUtils;
 import brut.common.BrutException;
 import brut.directory.ExtFile;
 import brut.util.OS;
@@ -75,9 +79,9 @@ public class DebuggableFalseChangeToTrueTest extends BaseTest {
         String apk = "issue2328-debuggable-flase-new";
 
         String expected = TestUtils.replaceNewlines("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>" +
-                "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" android:compileSdkVersion=\"23\" " +
-                "android:compileSdkVersionCodename=\"6.0-2438415\" package=\"com.ibotpeaches.issue2328\" platformBuildVersionCode=\"23\" " +
-                "platformBuildVersionName=\"6.0-2438415\">    <application android:debuggable=\"true\"/></manifest>");
+            "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" android:compileSdkVersion=\"23\" " +
+            "android:compileSdkVersionCodename=\"6.0-2438415\" package=\"com.ibotpeaches.issue2328\" platformBuildVersionCode=\"23\" " +
+            "platformBuildVersionName=\"6.0-2438415\">    <application android:debuggable=\"true\"/></manifest>");
 
         byte[] encoded = Files.readAllBytes(Paths.get(sTmpDir + File.separator + apk + File.separator + "AndroidManifest.xml"));
         String obtained = TestUtils.replaceNewlines(new String(encoded));

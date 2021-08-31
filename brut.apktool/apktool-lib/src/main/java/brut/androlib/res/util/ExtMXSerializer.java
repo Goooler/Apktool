@@ -25,7 +25,7 @@ import java.io.Writer;
 public class ExtMXSerializer extends MXSerializer implements ExtXmlSerializer {
     @Override
     public void startDocument(String encoding, Boolean standalone)
-            throws IOException, IllegalArgumentException, IllegalStateException {
+        throws IOException, IllegalArgumentException, IllegalStateException {
         super.startDocument(encoding != null ? encoding : mDefaultEncoding, standalone);
         this.newLine();
     }

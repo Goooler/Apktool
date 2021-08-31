@@ -60,8 +60,8 @@ public class ResConfigFlags {
     public ResConfigFlags() {
         mcc = 0;
         mnc = 0;
-        language = new char[] { '\00', '\00' };
-        region = new char[] { '\00', '\00' };
+        language = new char[]{'\00', '\00'};
+        region = new char[]{'\00', '\00'};
         orientation = ORIENTATION_ANY;
         touchscreen = TOUCHSCREEN_ANY;
         density = DENSITY_DEFAULT;
@@ -131,7 +131,7 @@ public class ResConfigFlags {
             if (localeVariant[0] == '\00') {
                 localeVariant = null;
             }
-        }  else {
+        } else {
             localeVariant = null;
         }
 
@@ -444,7 +444,7 @@ public class ResConfigFlags {
         // allows values-xx-rXX, values-xx, values-xxx-rXX
         // denies values-xxx, anything else
         if (localeVariant == null && localeScript == null && (region[0] != '\00' || language[0] != '\00') &&
-                region.length != 3) {
+            region.length != 3) {
             sb.append("-").append(language);
             if (region[0] != '\00') {
                 sb.append("-r").append(region);
@@ -472,7 +472,7 @@ public class ResConfigFlags {
 
     private String toUpper(char[] character) {
         StringBuilder sb = new StringBuilder();
-        for (char ch: character) {
+        for (char ch : character) {
             sb.append(Character.toUpperCase(ch));
         }
         return sb.toString();

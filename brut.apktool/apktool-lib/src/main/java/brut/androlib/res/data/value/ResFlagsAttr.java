@@ -37,8 +37,8 @@ public class ResFlagsAttr extends ResAttr {
 
     @Override
     public String convertToResXmlFormat(ResScalarValue value)
-            throws AndrolibException {
-        if(value instanceof ResReferenceValue) {
+        throws AndrolibException {
+        if (value instanceof ResReferenceValue) {
             return value.encodeAsResXml();
         }
         if (!(value instanceof ResIntValue)) {
@@ -71,7 +71,7 @@ public class ResFlagsAttr extends ResAttr {
 
     @Override
     protected void serializeBody(XmlSerializer serializer, ResResource res)
-            throws AndrolibException, IOException {
+        throws AndrolibException, IOException {
         for (FlagItem item : mItems) {
             serializer.startTag(null, "flag");
             serializer.attribute(null, "name", item.getValue());

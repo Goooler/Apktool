@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 public class ResStyleValue extends ResBagValue implements
-        ResValuesXmlSerializable {
+    ResValuesXmlSerializable {
     ResStyleValue(ResReferenceValue parent,
                   Duo<Integer, ResScalarValue>[] items, ResValueFactory factory) {
         super(parent);

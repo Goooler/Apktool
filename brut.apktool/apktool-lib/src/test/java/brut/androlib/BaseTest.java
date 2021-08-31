@@ -20,7 +20,11 @@ import brut.androlib.meta.MetaInfo;
 import brut.common.BrutException;
 import brut.directory.ExtFile;
 import brut.directory.FileDirectory;
-import org.custommonkey.xmlunit.*;
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
+import org.custommonkey.xmlunit.ElementQualifier;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.xml.sax.SAXException;
 
 import java.io.File;
@@ -32,7 +36,9 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class BaseTest {
 
@@ -68,9 +74,9 @@ public class BaseTest {
         for (String filename : files) {
 
             File control = new File((sTestOrigDir + location), filename);
-            File test =  new File((sTestNewDir + location), filename);
+            File test = new File((sTestNewDir + location), filename);
 
-            if (! test.isFile() || ! control.isFile()) {
+            if (!test.isFile() || !control.isFile()) {
                 exists = false;
             }
         }
@@ -98,8 +104,8 @@ public class BaseTest {
         compareXmlFiles(path, null);
     }
 
-    protected  void checkFolderExists(String path) {
-        File f =  new File(sTestNewDir, path);
+    protected void checkFolderExists(String path) {
+        File f = new File(sTestNewDir, path);
 
         assertTrue(f.isDirectory());
     }

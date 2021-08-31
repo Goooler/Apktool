@@ -138,7 +138,7 @@ public final class ResXmlEncoders {
 
     public static boolean hasMultipleNonPositionalSubstitutions(String str) {
         Duo<List<Integer>, List<Integer>> tuple = findSubstitutions(str, 4);
-        return ! tuple.m1.isEmpty() && tuple.m1.size() + tuple.m2.size() > 1;
+        return !tuple.m1.isEmpty() && tuple.m1.size() + tuple.m2.size() > 1;
     }
 
     public static String enumerateNonPositionalSubstitutionsIfRequired(String str) {
@@ -162,8 +162,8 @@ public final class ResXmlEncoders {
 
     /**
      * It returns a tuple of:
-     *   - a list of offsets of non positional substitutions. non-pos is defined as any "%" which isn't "%%" nor "%\d+\$"
-     *   - a list of offsets of positional substitutions
+     * - a list of offsets of non positional substitutions. non-pos is defined as any "%" which isn't "%%" nor "%\d+\$"
+     * - a list of offsets of positional substitutions
      */
     private static Duo<List<Integer>, List<Integer>> findSubstitutions(String str, int nonPosMax) {
         if (nonPosMax == -1) {
@@ -191,7 +191,7 @@ public final class ResXmlEncoders {
                 continue;
             }
             if (c >= '0' && c <= '9' && pos2 < length) {
-                while ((c = str.charAt(pos2++)) >= '0' && c <= '9' && pos2 < length);
+                while ((c = str.charAt(pos2++)) >= '0' && c <= '9' && pos2 < length) ;
                 if (c == '$') {
                     positional.add(pos);
                     continue;
@@ -210,6 +210,6 @@ public final class ResXmlEncoders {
     private static boolean isPrintableChar(char c) {
         Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
         return !Character.isISOControl(c) && c != KeyEvent.CHAR_UNDEFINED
-                && block != null && block != Character.UnicodeBlock.SPECIALS;
+            && block != null && block != Character.UnicodeBlock.SPECIALS;
     }
 }

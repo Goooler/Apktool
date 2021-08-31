@@ -55,14 +55,14 @@ public class SmaliBuilder {
             for (String fileName : mSmaliDir.getDirectory().getFiles(true)) {
                 buildFile(fileName, dexBuilder);
             }
-            dexBuilder.writeTo(new FileDataStore( new File(mDexFile.getAbsolutePath())));
+            dexBuilder.writeTo(new FileDataStore(new File(mDexFile.getAbsolutePath())));
         } catch (IOException | DirectoryException ex) {
             throw new AndrolibException(ex);
         }
     }
 
     private void buildFile(String fileName, DexBuilder dexBuilder)
-            throws AndrolibException, IOException {
+        throws AndrolibException, IOException {
         File inFile = new File(mSmaliDir, fileName);
         InputStream inStream = new FileInputStream(inFile);
 

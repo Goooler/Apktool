@@ -46,7 +46,7 @@ public class ApktoolProperties {
         InputStream templateStream = null;
         try {
             templateStream = org.jf.baksmali.Main.class.getClassLoader().getResourceAsStream("baksmali.properties");
-        } catch(NoClassDefFoundError ex) {
+        } catch (NoClassDefFoundError ex) {
             LOGGER.warning("Can't load baksmali properties.");
         }
         Properties properties = new Properties();
@@ -57,14 +57,15 @@ public class ApktoolProperties {
                 properties.load(templateStream);
                 version = properties.getProperty("application.version");
                 templateStream.close();
-            } catch (IOException ignored) { }
+            } catch (IOException ignored) {
+            }
         }
         sProps.put("baksmaliVersion", version);
 
         templateStream = null;
         try {
             templateStream = org.jf.smali.Main.class.getClassLoader().getResourceAsStream("smali.properties");
-        } catch(NoClassDefFoundError ex) {
+        } catch (NoClassDefFoundError ex) {
             LOGGER.warning("Can't load smali properties.");
         }
         properties = new Properties();
@@ -75,7 +76,8 @@ public class ApktoolProperties {
                 properties.load(templateStream);
                 version = properties.getProperty("application.version");
                 templateStream.close();
-            } catch (IOException ignored) { }
+            } catch (IOException ignored) {
+            }
         }
         sProps.put("smaliVersion", version);
     }

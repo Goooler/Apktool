@@ -17,6 +17,7 @@
 package brut.androlib.res.decoder;
 
 import brut.androlib.AndrolibException;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public class ResStreamDecoderContainer {
     private final Map<String, ResStreamDecoder> mDecoders = new HashMap<>();
 
     public void decode(InputStream in, OutputStream out, String decoderName)
-            throws AndrolibException {
+        throws AndrolibException {
         getDecoder(decoderName).decode(in, out);
     }
 

@@ -35,7 +35,7 @@ public class ResEnumAttr extends ResAttr {
 
     @Override
     public String convertToResXmlFormat(ResScalarValue value)
-            throws AndrolibException {
+        throws AndrolibException {
         if (value instanceof ResIntValue) {
             String ret = decodeValue(((ResIntValue) value).getValue());
             if (ret != null) {
@@ -47,14 +47,14 @@ public class ResEnumAttr extends ResAttr {
 
     @Override
     protected void serializeBody(XmlSerializer serializer, ResResource res)
-            throws AndrolibException, IOException {
+        throws AndrolibException, IOException {
         for (Duo<ResReferenceValue, ResIntValue> duo : mItems) {
             int intVal = duo.m2.getValue();
             ResResSpec m1Referent = duo.m1.getReferent();
 
             serializer.startTag(null, "enum");
             serializer.attribute(null, "name",
-                    m1Referent != null ? m1Referent.getName() : "@null"
+                m1Referent != null ? m1Referent.getName() : "@null"
             );
             serializer.attribute(null, "value", String.valueOf(intVal));
             serializer.endTag(null, "enum");

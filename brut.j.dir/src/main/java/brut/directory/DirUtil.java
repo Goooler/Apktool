@@ -22,7 +22,10 @@ import brut.common.RootUnknownFileException;
 import brut.common.TraversalUnknownFileException;
 import brut.util.BrutIO;
 import brut.util.OS;
-import java.io.*;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 public class DirUtil {
@@ -33,26 +36,26 @@ public class DirUtil {
     }
 
     public static void copyToDir(Directory in, Directory out)
-            throws DirectoryException {
+        throws DirectoryException {
         for (String fileName : in.getFiles(true)) {
             copyToDir(in, out, fileName);
         }
     }
 
     public static void copyToDir(Directory in, Directory out,
-            String[] fileNames) throws DirectoryException {
+                                 String[] fileNames) throws DirectoryException {
         for (String fileName : fileNames) {
             copyToDir(in, out, fileName);
         }
     }
 
     public static void copyToDir(Directory in, Directory out, String fileName)
-            throws DirectoryException {
+        throws DirectoryException {
         copyToDir(in, out, fileName, fileName);
     }
 
     public static void copyToDir(Directory in, Directory out, String inFile, String outFile)
-            throws DirectoryException {
+        throws DirectoryException {
         try {
             if (in.containsDir(inFile)) {
                 in.getDir(inFile).copyToDir(out.createDir(outFile));
@@ -65,21 +68,21 @@ public class DirUtil {
     }
 
     public static void copyToDir(Directory in, File out)
-            throws DirectoryException {
+        throws DirectoryException {
         for (String fileName : in.getFiles(true)) {
             copyToDir(in, out, fileName);
         }
     }
 
     public static void copyToDir(Directory in, File out, String[] fileNames)
-            throws DirectoryException {
+        throws DirectoryException {
         for (String fileName : fileNames) {
             copyToDir(in, out, fileName);
         }
     }
 
     public static void copyToDir(Directory in, File out, String fileName)
-            throws DirectoryException {
+        throws DirectoryException {
         try {
             if (in.containsDir(fileName)) {
                 OS.rmdir(new File(out, fileName));

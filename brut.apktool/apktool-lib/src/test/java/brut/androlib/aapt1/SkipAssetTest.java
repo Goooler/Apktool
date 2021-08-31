@@ -19,14 +19,18 @@ package brut.androlib.aapt1;
 import brut.androlib.ApkDecoder;
 import brut.androlib.BaseTest;
 import brut.androlib.TestUtils;
-import brut.directory.ExtFile;
 import brut.common.BrutException;
+import brut.directory.ExtFile;
 import brut.util.OS;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class SkipAssetTest extends BaseTest {
 
@@ -77,13 +81,13 @@ public class SkipAssetTest extends BaseTest {
     }
 
     private void checkFileDoesNotExist(String path) throws BrutException {
-        File f =  new File(sTestOrigDir, path);
+        File f = new File(sTestOrigDir, path);
 
         assertFalse(f.isFile());
     }
 
     private void checkFileDoesExist(String path) throws BrutException {
-        File f =  new File(sTestOrigDir, path);
+        File f = new File(sTestOrigDir, path);
 
         assertTrue(f.isFile());
     }

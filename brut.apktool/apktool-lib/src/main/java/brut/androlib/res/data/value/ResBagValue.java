@@ -37,17 +37,17 @@ public class ResBagValue extends ResValue implements ResValuesXmlSerializable {
         String type = res.getResSpec().getType().getName();
         if ("style".equals(type)) {
             new ResStyleValue(mParent, new Duo[0], null)
-                    .serializeToResValuesXml(serializer, res);
+                .serializeToResValuesXml(serializer, res);
             return;
         }
         if ("array".equals(type)) {
             new ResArrayValue(mParent, new Duo[0]).serializeToResValuesXml(
-                    serializer, res);
+                serializer, res);
             return;
         }
         if ("plurals".equals(type)) {
             new ResPluralsValue(mParent, new Duo[0]).serializeToResValuesXml(
-                    serializer, res);
+                serializer, res);
             return;
         }
 

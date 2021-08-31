@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class ResArrayValue extends ResBagValue implements
-        ResValuesXmlSerializable {
+    ResValuesXmlSerializable {
 
     ResArrayValue(ResReferenceValue parent, Duo<Integer, ResScalarValue>[] items) {
         super(parent);

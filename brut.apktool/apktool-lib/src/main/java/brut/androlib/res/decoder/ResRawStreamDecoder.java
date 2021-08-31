@@ -26,7 +26,7 @@ import java.io.OutputStream;
 public class ResRawStreamDecoder implements ResStreamDecoder {
     @Override
     public void decode(InputStream in, OutputStream out)
-            throws AndrolibException {
+        throws AndrolibException {
         try {
             IOUtils.copy(in, out);
         } catch (IOException ex) {
